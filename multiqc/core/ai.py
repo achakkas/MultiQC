@@ -317,12 +317,19 @@ class OpenAiClient(Client):
                 ],
             }
         )
-        response = self._request_with_error_handling_and_retries(
-            self.endpoint,
-            headers={
+        if 'azure' in self.endpoint.lower():
+            headers = {
+                'Content-Type': 'application/json',
+                'api-key': self.api_key
+            }
+        else:
+            headers = {
                 "Content-Type": "application/json",
                 "Authorization": f"Bearer {self.api_key}",
-            },
+            }
+        response = self._request_with_error_handling_and_retries(
+            self.endpoint,
+            headers=headers,
             body=body,
         )
         return OpenAiClient.ApiResponse(
